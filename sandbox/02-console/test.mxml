@@ -1,0 +1,13 @@
+<?xml version="1.0"?>
+<custom:Test
+    xmlns:custom="*"
+    xmlns:mx="http://www.adobe.com/2006/mxml"
+    layout="absolute"
+    backgroundColor="#ffffff"
+    width="600" height="400"
+    >
+
+    <mx:TextArea id="$console" width="100%" height="100%" editable="false" >
+        <mx:text></mx:text></mx:TextArea>
+
+</custom:Test>
