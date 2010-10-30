@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/1.5">
+    <id>flex</id>
+    <version>0.0</version>
+    <filename>flex</filename>
+    <initialWindow>
+        <content>flex.swf</content>
+    </initialWindow>
+</application>
+

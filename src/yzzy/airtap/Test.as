@@ -5,6 +5,68 @@ package yzzy.airtap {
 
     public class Test {
 
+        private static var __singleton__:Test;
+        public static function singleton():Test {
+            if ( ! __singleton__ ) {
+                __singleton__ = new Test();
+            }
+            return __singleton__;
+        }
+
+        public static function ok( ... arguments ):void{
+            Test.singleton().ok.apply( Test.singleton(), arguments );
+        }
+
+        public static function done( ... arguments ):void{
+            Test.singleton().done.apply( Test.singleton(), arguments );
+        }
+
+        private var _stdout:FileStream;
+        private var _stderr:FileStream;
+        private var cursor:uint = 0;
+
+        public function Test() {
+
+            _stdout = new FileStream();
+            _stdout.open( new File( "/dev/fd/1" ), FileMode.WRITE );
+
+            _stderr = new FileStream();
+            _stderr.open( new File( "/dev/fd/2" ), FileMode.WRITE );
+        }
+
+        public function _ok( test:*, name:String = null ):void {
+
+            this.cursor += 1;
+
+            if ( test ) {
+                this.stdout( 'ok' );
+            }
+            else {
+                this.stdout( 'not ok' );
+            }
+
+            this.stdout( ' ' + this.cursor );
+
+            if ( name != null ) {
+                name.replace( /#/, '\#' );
+                this.stdout( ' - ' + name );
+            }
+
+            this.stdout( "\n" );
+        }
+
+        public function stdout( output:String ):void {
+            this._stdout.writeUTFBytes( output );
+        }
+
+        public function ok():void {
+            this._ok.apply( this, arguments )
+        }
+
+        public function done():void {
+            this.stdout( '1..' + this.cursor + "\n" );
+        }
+
         public static function xyzzy():void {
 
             var stdout:FileStream = new FileStream();
