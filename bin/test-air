@@ -1,0 +1,34 @@
+#!/usr/bin/env perl
+
+use strict;
+use warnings;
+
+use Path::Class;
+use File::Temp qw/ tempdir /;
+use File::Copy qw/ copy /;
+use IPC::System::Simple qw/ run /;
+
+my $build_air = $ENV{ BUILD_AIR } or die "Missing \$BUILD_AIR";
+my $run_air = $ENV{ RUN_AIR } or die "Missing \$RUN_AIR";
+
+my $as = shift @ARGV;
+die "Missing .as file" unless defined $as && length $as;
+$as  = file $as;
+
+my $xml = $as->parent->file( 'test.xml' );
+die "Missing .xml file" unless -s $xml;
+
+my %test;
+$test{dir} = dir( '.t', (join '-', $as->parent->dir_list, $as->basename ) );
+$test{dir}->mkpath;
+$test{as} = $test{dir}->file( 'test.as' );
+$test{xml} = $test{dir}->file( 'test.xml' );
+$test{result} = $test{dir}->file( 'result.tap' );
+
+if ( ! -s $test{as} || $test{as}->stat->mtime < $as->stat->mtime ) {
+    copy "$as", "$test{as}" or die "Failed copy $as => $test{as}";
+}
+copy "$xml", "$test{xml}" or die "Failed copy => $xml";
+run "$build_air $test{as}";
+run "$run_air $test{xml} > $test{result}";
+print $test{result}->slurp;

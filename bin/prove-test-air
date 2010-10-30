@@ -1,0 +1,6 @@
+#!/bin/sh
+
+export RUN_AIR="$HOME/opt/flex/bin/adl"
+export BUILD_AIR="bin/build-air"
+
+exec bin/test-air $*
