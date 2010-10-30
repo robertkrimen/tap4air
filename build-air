@@ -1,0 +1,4 @@
+#!/bin/sh
+
+#$HOME/opt/flex/bin/mxmlc -incremental +configname=air -compiler.source-path=as3/ -debug $*
+$HOME/opt/flex/bin/mxmlc -incremental +configname=air -debug $*
