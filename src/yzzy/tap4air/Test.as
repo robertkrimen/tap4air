@@ -1,4 +1,4 @@
-package yzzy.airtap {
+package yzzy.tap4air {
 
     import flash.filesystem.*;
     import flash.desktop.NativeApplication;

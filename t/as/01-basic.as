@@ -1,11 +1,6 @@
 package {
+    import yzzy.tap4air.Test;
     import mx.core.UIComponent;
-    import yzzy.airtap.Test;
-
-    import flash.filesystem.File;
-    import flash.filesystem.FileMode;
-    import flash.filesystem.FileStream;
-
     import flash.desktop.NativeApplication;
 
     public class test extends UIComponent {
