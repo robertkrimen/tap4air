@@ -21,6 +21,14 @@ package yzzy.airtap {
             Test.singleton().done.apply( Test.singleton(), arguments );
         }
 
+        public static function same( ... arguments ):void{
+            Test.singleton().same.apply( Test.singleton(), arguments );
+        }
+
+        public static function like( ... arguments ):void{
+            Test.singleton().like.apply( Test.singleton(), arguments );
+        }
+
         private var _stdout:FileStream;
         private var _stderr:FileStream;
         private var cursor:uint = 0;
@@ -65,6 +73,18 @@ package yzzy.airtap {
 
         public function done():void {
             this.stdout( '1..' + this.cursor + "\n" );
+        }
+
+        public function same( have:*, want:*, ... arguments ):void {
+            var test:Boolean = have == want;
+            arguments.unshift( test );
+            this._ok.apply( this, arguments );
+        }
+
+        public function like( have:*, want:RegExp, ... arguments ):void {
+            var test:Boolean = want.test( have );
+            arguments.unshift( test );
+            this._ok.apply( this, arguments );
         }
 
         public static function xyzzy():void {
