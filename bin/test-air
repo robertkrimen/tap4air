@@ -9,8 +9,20 @@ use File::Copy qw/ copy /;
 use IPC::System::Simple qw/ run /;
 use Getopt::Long qw/ GetOptions /;
 
-my $build_air = $ENV{ BUILD_AIR } or die "Missing \$BUILD_AIR";
-my $run_air = $ENV{ RUN_AIR } or die "Missing \$RUN_AIR";
+my $build_air = $ENV{ BUILD_AIR } or do {
+    print STDERR <<_END_;
+Missing \$BUILD_AIR
+# mxmlc -incremental +configname=air -compiler.source-path=src/ -debug
+_END_
+    exit -1;
+};
+my $run_air = $ENV{ RUN_AIR } or do {
+    print STDERR <<_END_;
+Missing \$RUN_AIR
+# adl
+_END_
+    exit -1;
+};
 
 my $as = shift @ARGV;
 die "Missing .as file" unless defined $as && length $as;
