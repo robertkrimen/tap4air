@@ -37,6 +37,10 @@ package yzzy.tap4air {
             Test.singleton().unlike.apply( Test.singleton(), arguments );
         }
 
+        public static function exit():void {
+            Test.singleton().exit.apply( Test.singleton(), arguments );
+        }
+
         private var _stdout:FileStream;
         private var _stderr:FileStream;
         private var cursor:uint = 0;
@@ -105,6 +109,11 @@ package yzzy.tap4air {
             var test:Boolean = ! want.test( have );
             arguments.unshift( test );
             this._ok.apply( this, arguments );
+        }
+
+        public function exit():void {
+            this.done();
+            NativeApplication.nativeApplication.exit( 0 );
         }
 
         public static function xyzzy():void {

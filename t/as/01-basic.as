@@ -11,8 +11,7 @@ package {
             Test.unequal( 1, 2, 'unequal' );
             Test.like( 'Xyzzy', /yzzy/, 'like' );
             Test.unlike( 'Xyzzy', /Y/, 'unlike' );
-            Test.done();
-            NativeApplication.nativeApplication.exit( 0 );
+            Test.exit();
         }
     }
 }
