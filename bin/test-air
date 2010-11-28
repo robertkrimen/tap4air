@@ -7,16 +7,21 @@ use Path::Class;
 use File::Temp qw/ tempdir /;
 use File::Copy qw/ copy /;
 use IPC::System::Simple qw/ run /;
+use Getopt::Long qw/ GetOptions /;
 
 my $build_air = $ENV{ BUILD_AIR } or die "Missing \$BUILD_AIR";
 my $run_air = $ENV{ RUN_AIR } or die "Missing \$RUN_AIR";
 
+my ( $scaffold );
+{
+    GetOptions(
+        'scaffold' => \$scaffold
+    );
+}
+
 my $as = shift @ARGV;
 die "Missing .as file" unless defined $as && length $as;
 $as  = file $as;
-
-my $xml = $as->parent->file( 'test.xml' );
-die "Missing .xml file" unless -s $xml;
 
 my %test;
 $test{dir} = dir( '.t', (join '-', $as->parent->dir_list, $as->basename ) );
@@ -25,10 +30,52 @@ $test{as} = $test{dir}->file( 'test.as' );
 $test{xml} = $test{dir}->file( 'test.xml' );
 $test{result} = $test{dir}->file( 'result.tap' );
 
-if ( ! -s $test{as} || $test{as}->stat->mtime < $as->stat->mtime ) {
-    copy "$as", "$test{as}" or die "Failed copy $as => $test{as}";
+if ( ! $scaffold ) {
+
+    my $xml = $as->parent->file( 'test.xml' );
+    die "Missing .xml file" unless -s $xml;
+
+    copy "$xml", "$test{xml}" or die "Failed copy => $xml";
+
+    if ( ! -s $test{as} || $test{as}->stat->mtime < $as->stat->mtime ) {
+        copy "$as", "$test{as}" or die "Failed copy $as => $test{as}";
+    }
 }
-copy "$xml", "$test{xml}" or die "Failed copy => $xml";
+else {
+
+    if ( ! -s $test{as} || $test{as}->stat->mtime < $as->stat->mtime ) {
+        my $content = $as->slurp;
+        $test{as}->openw->print( <<_END_ );
+package {
+    import yzzy.tap4air.Test;
+    import mx.core.UIComponent;
+    import flash.desktop.NativeApplication;
+
+    public class test extends UIComponent {
+        
+        public function test() {
+var \$:* = Test.singleton();
+$content
+        }
+    }
+}
+_END_
+    }
+
+    $test{xml}->openw->print( <<_END_ );
+<?xml version="1.0" encoding="UTF-8"?>
+<application xmlns="http://ns.adobe.com/air/application/1.5">
+    <id>test</id>
+    <version>0.0</version>
+    <filename>test</filename>
+    <initialWindow>
+        <content>test.swf</content>
+    </initialWindow>
+</application>
+_END_
+
+}
+
 run "$build_air $test{as}";
 run "$run_air $test{xml} > $test{result}";
 print $test{result}->slurp;
