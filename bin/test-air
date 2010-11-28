@@ -12,14 +12,14 @@ use Getopt::Long qw/ GetOptions /;
 my $build_air = $ENV{ BUILD_AIR } or do {
     print STDERR <<_END_;
 Missing \$BUILD_AIR
-# mxmlc -incremental +configname=air -compiler.source-path=src/ -debug
+# \$FLEX_PATH/bin/mxmlc -incremental +configname=air -compiler.source-path=src/ -debug
 _END_
     exit -1;
 };
 my $run_air = $ENV{ RUN_AIR } or do {
     print STDERR <<_END_;
 Missing \$RUN_AIR
-# adl
+# \$FLEX_PATH/bin/adl
 _END_
     exit -1;
 };
