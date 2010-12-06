@@ -1,6 +1,6 @@
 #!/bin/sh
 
-export RUN_AIR="$HOME/opt/flex/bin/adl"
+export RUN_AIR="$HOME/opt/air/bin/adl -profile desktop"
 export BUILD_AIR="bin/build-air"
 
 exec prove4air $*

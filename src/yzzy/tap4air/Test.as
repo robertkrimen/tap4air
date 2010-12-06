@@ -54,7 +54,7 @@ package yzzy.tap4air {
             _stderr.open( new File( "/dev/fd/2" ), FileMode.WRITE );
         }
 
-        public function _ok( test:*, name:String = null ):void {
+        public function _ok( test:*, name:String = null ):Boolean {
 
             this.cursor += 1;
 
@@ -73,6 +73,8 @@ package yzzy.tap4air {
             }
 
             this.stdout( "\n" );
+
+            return test ? true : false;
         }
 
         public function stdout( output:String ):void {
@@ -90,7 +92,13 @@ package yzzy.tap4air {
         public function equal( have:*, want:*, ... arguments ):void {
             var test:Boolean = have == want;
             arguments.unshift( test );
-            this._ok.apply( this, arguments );
+            if ( ! this._ok.apply( this, arguments ) ) {
+                this.stdout(
+                    "#   Failed test\n" +
+                    "#          got: '" + have + "'\n" +
+                    "#     expected: '" + want + "'\n"
+                );
+            }
         }
 
         public function unequal( have:*, want:*, ... arguments ):void {
