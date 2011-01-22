@@ -81,6 +81,10 @@ package yzzy.tap4air {
             this._stdout.writeUTFBytes( output );
         }
 
+        public function stderr( output:String ):void {
+            this._stderr.writeUTFBytes( output );
+        }
+
         public function ok():void {
             this._ok.apply( this, arguments )
         }
