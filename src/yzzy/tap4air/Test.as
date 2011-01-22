@@ -42,17 +42,15 @@ package yzzy.tap4air {
         }
 
         private var _stdout:FileStream;
-        private var _stderr:FileStream;
         private var cursor:uint = 0;
         private var _done:Boolean = false;
 
         public function Test() {
 
             _stdout = new FileStream();
-            _stdout.open( new File( "/dev/fd/1" ), FileMode.WRITE );
+            // TODO Check for existence/success in opening stdout?
+            _stdout.open( new File( "/dev/stdout" ), FileMode.WRITE );
 
-            _stderr = new FileStream();
-            _stderr.open( new File( "/dev/fd/2" ), FileMode.WRITE );
         }
 
         public function _ok( test:*, name:String = null ):Boolean {
@@ -75,11 +73,7 @@ package yzzy.tap4air {
 
             this.stdout( "\n" );
             if ( ! test ) {
-                this.stdout( "#   Failed test" );
-                if ( name != null ) {
-                    this.stdout( " '" + name + "'" );
-                }
-                this.stdout( "\n" );
+                this.stderr( "#   Failed test" + (name == null ? "" : " '" + name + "'") );
             }
 
             return test ? true : false;
@@ -90,10 +84,8 @@ package yzzy.tap4air {
             var test:Boolean = this._ok.apply( this, arguments );
 
             if ( ! test ) {
-                this.stdout(
-                    "#          got: '" + have + "'\n" +
-                    "#     expected: '" + want + "'\n"
-                );
+                this.stderr( "#          got: '" + have + "'" );
+                this.stderr( "#     expected: '" + want + "'" );
             }
 
             return test;
@@ -104,7 +96,7 @@ package yzzy.tap4air {
         }
 
         public function stderr( output:String ):void {
-            this._stderr.writeUTFBytes( output );
+            trace( output );
         }
 
         public function ok():void {
